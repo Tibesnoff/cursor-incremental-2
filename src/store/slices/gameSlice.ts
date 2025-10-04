@@ -14,6 +14,7 @@ interface GameState {
   points: string; // Store as string to avoid non-serializable Big.js objects
   isPlaying: boolean;
   resources: Resource[];
+  buyMode: 'buy1' | 'till10';
 }
 
 // Initialize resources from config
@@ -27,6 +28,7 @@ const initialState: GameState = {
   points: getBaseNeurons().toString(),
   isPlaying: false,
   resources: initialResources,
+  buyMode: 'buy1',
 };
 
 const gameSlice = createSlice({
@@ -35,6 +37,9 @@ const gameSlice = createSlice({
   reducers: {
     setPlaying: (state, action: PayloadAction<boolean>) => {
       state.isPlaying = action.payload;
+    },
+    setBuyMode: (state, action: PayloadAction<'buy1' | 'till10'>) => {
+      state.buyMode = action.payload;
     },
     addNeuron: (state) => {
       const currentPoints = new Big(state.points);
@@ -274,6 +279,7 @@ const gameSlice = createSlice({
 
 export const {
   setPlaying,
+  setBuyMode,
   addNeuron,
   purchaseResource,
   maxPurchase,

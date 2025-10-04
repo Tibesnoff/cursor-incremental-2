@@ -1,39 +1,60 @@
 import React from 'react';
 import { formatNumber } from '@/utils/numberFormatter';
 import PurchaseButton from './PurchaseButton';
+import { useAppSelector, useAppDispatch } from '@/store/hooks';
+import { formatCost } from '@/utils/numberFormatter';
+import { calculateCost } from '@/utils/costCalculator';
+import { getAllResourceConfigs } from '@/utils/configLoader';
+import { calculateMultiplier } from '@/utils/multiplierCalculator';
+import { calculateProductionRatio } from '@/utils/productionRatioCalculator';
+import { calculateTill10Affordable } from '@/utils/till10Calculator';
+import { purchaseResource, purchaseTill10 } from '@/store/slices/gameSlice';
+import Big from 'big.js';
 
 interface ResourceRowProps {
-  name: string;
-  owned: number;
-  bought: number;
-  multiplier: number;
-  cost: string; // Will be formatted Big.js value
-  canAfford: boolean;
-  productionRatio: number; // Production ratio as percentage
-  buyMode: 'buy1' | 'till10';
-  till10Affordable: number;
-  onPurchase: () => void;
+  resourceId: string;
 }
 
-const ResourceRow: React.FC<ResourceRowProps> = ({
-  name,
-  owned,
-  bought,
-  multiplier,
-  cost,
-  canAfford,
-  productionRatio,
-  buyMode,
-  till10Affordable,
-  onPurchase,
-}) => {
+const ResourceRow: React.FC<ResourceRowProps> = ({ resourceId }) => {
+  // Get data from Redux store
+  const { points, resources, buyMode } = useAppSelector((state) => state.game);
+  const dispatch = useAppDispatch();
+
+  // Find the resource and config
+  const resource = resources.find((r) => r.id === resourceId);
+  const config = getAllResourceConfigs().find((c) => c.id === resourceId);
+
+  if (!resource || !config) return null;
+
+  // Calculate all the values we need
+  const currentCost = calculateCost(new Big(config.baseCost), resource.bought);
+  const multiplier = calculateMultiplier(resource.bought);
+  const canAfford = new Big(points).gte(currentCost);
+  const productionRatio = calculateProductionRatio(resourceId, resources);
+
+  // Calculate affordable amount based on mode
+  const till10Affordable =
+    buyMode === 'till10'
+      ? calculateTill10Affordable(resourceId, resource.bought, new Big(points))
+      : canAfford
+        ? 1
+        : 0;
+
+  // Handle purchase internally
+  const handlePurchase = () => {
+    if (buyMode === 'buy1') {
+      dispatch(purchaseResource(resourceId));
+    } else {
+      dispatch(purchaseTill10(resourceId));
+    }
+  };
   return (
     <div className="w-full max-w-6xl mx-auto px-8 py-2 bg-white rounded-lg shadow-md border border-gray-200">
       <div className="grid grid-cols-5 gap-4 items-center">
         {/* Column 1: Name and Multiplier */}
         <div className="col-span-1">
           <h3 className="text-xl font-semibold text-gray-800">
-            {name}{' '}
+            {config.name}{' '}
             <span className="text-sm text-gray-500">
               {formatNumber(multiplier)}x
             </span>
@@ -43,7 +64,7 @@ const ResourceRow: React.FC<ResourceRowProps> = ({
         {/* Column 2: Amount */}
         <div className="col-span-1">
           <span className="text-xl font-semibold text-gray-600">
-            {formatNumber(owned)}
+            {formatNumber(resource.owned)}
             {productionRatio > 0 && (
               <span className="text-sm text-green-600 ml-2">
                 ({productionRatio.toFixed(2)}%/s)
@@ -58,17 +79,17 @@ const ResourceRow: React.FC<ResourceRowProps> = ({
         {/* Column 4 & 5: Button */}
         <div className="col-span-2 relative group">
           <PurchaseButton
-            onClick={onPurchase}
+            onClick={handlePurchase}
             disabled={!canAfford}
             buyMode={buyMode}
-            currentBought={bought}
+            currentBought={resource.bought}
             affordableAmount={till10Affordable}
-            cost={cost}
+            cost={formatCost(currentCost)}
           />
 
           {/* Tooltip */}
           <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-            Bought: {formatNumber(bought)}
+            Bought: {formatNumber(resource.bought)}
             <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-800 rotate-45"></div>
           </div>
         </div>

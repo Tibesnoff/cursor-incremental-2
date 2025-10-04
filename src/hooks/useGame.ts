@@ -3,12 +3,13 @@ import {
   purchaseResource,
   maxPurchase,
   purchaseTill10,
+  setBuyMode,
 } from '@/store/slices/gameSlice';
 import { useCallback } from 'react';
 
 export const useGame = () => {
   const dispatch = useAppDispatch();
-  const { points, resources } = useAppSelector((state) => state.game);
+  const { points, resources, buyMode } = useAppSelector((state) => state.game);
 
   const purchase = useCallback(
     (resourceId: string) => {
@@ -28,11 +29,20 @@ export const useGame = () => {
     [dispatch]
   );
 
+  const setBuyModeAction = useCallback(
+    (mode: 'buy1' | 'till10') => {
+      dispatch(setBuyMode(mode));
+    },
+    [dispatch]
+  );
+
   return {
     points,
     resources,
+    buyMode,
     purchase,
     maxBuy,
     purchaseTill10: purchaseTill10Action,
+    setBuyMode: setBuyModeAction,
   };
 };
