@@ -12,7 +12,7 @@ const NavButton = forwardRef<HTMLButtonElement, NavButtonProps>(
       <button
         ref={ref}
         onClick={onClick}
-        className={`w-full p-4 rounded-lg text-left transition-colors duration-200 ${
+        className={`w-full p-4 rounded-lg text-center transition-colors duration-200 ${
           isActive
             ? 'bg-blue-600 text-white'
             : 'bg-gray-700 text-gray-300 hover:bg-gray-600'

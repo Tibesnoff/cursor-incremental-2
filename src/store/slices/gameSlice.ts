@@ -65,6 +65,80 @@ const gameSlice = createSlice({
         }
       }
     },
+    maxPurchase: (state) => {
+      const configs = getAllResourceConfigs();
+      let currentPoints = new Big(state.points);
+      let purchased = true;
+
+      // Keep purchasing until we can't afford anything
+      while (purchased) {
+        purchased = false;
+
+        // Go through each resource in order
+        for (const config of configs) {
+          const resource = state.resources.find((r) => r.id === config.id);
+          if (!resource) continue;
+
+          // Calculate current cost for this resource
+          const currentCost = calculateCost(
+            new Big(config.baseCost),
+            resource.bought
+          );
+
+          // If we can afford it, buy it
+          if (currentPoints.gte(currentCost)) {
+            currentPoints = currentPoints.sub(currentCost);
+            resource.owned += 1;
+            resource.bought += 1;
+            purchased = true;
+          }
+        }
+      }
+
+      // Update points
+      state.points = currentPoints.toString();
+    },
+    purchaseTill10: (state, action: PayloadAction<string>) => {
+      const resourceId = action.payload;
+      const resource = state.resources.find((r) => r.id === resourceId);
+
+      if (resource) {
+        const config = getAllResourceConfigs().find((c) => c.id === resourceId);
+        if (config) {
+          let currentPoints = new Big(state.points);
+
+          // Calculate how many we need to buy
+          let needed = 0;
+          if (resource.bought === 0) {
+            needed = 10; // Buy up to 10 from 0
+          } else if (resource.bought % 10 === 0) {
+            needed = 10; // Buy 10 more if at a 10x milestone
+          } else {
+            const next10x = Math.ceil(resource.bought / 10) * 10;
+            needed = next10x - resource.bought;
+          }
+
+          // Buy as many as we can afford
+          for (let i = 0; i < needed; i++) {
+            const currentCost = calculateCost(
+              new Big(config.baseCost),
+              resource.bought
+            );
+
+            if (currentPoints.gte(currentCost)) {
+              currentPoints = currentPoints.sub(currentCost);
+              resource.owned += 1;
+              resource.bought += 1;
+            } else {
+              break;
+            }
+          }
+
+          // Update points
+          state.points = currentPoints.toString();
+        }
+      }
+    },
     tick: (state) => {
       const configs = getAllResourceConfigs();
 
@@ -198,6 +272,12 @@ const gameSlice = createSlice({
   },
 });
 
-export const { setPlaying, addNeuron, purchaseResource, tick } =
-  gameSlice.actions;
+export const {
+  setPlaying,
+  addNeuron,
+  purchaseResource,
+  maxPurchase,
+  purchaseTill10,
+  tick,
+} = gameSlice.actions;
 export default gameSlice.reducer;

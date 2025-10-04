@@ -1,5 +1,9 @@
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { purchaseResource } from '@/store/slices/gameSlice';
+import {
+  purchaseResource,
+  maxPurchase,
+  purchaseTill10,
+} from '@/store/slices/gameSlice';
 import { useCallback } from 'react';
 
 export const useGame = () => {
@@ -13,9 +17,22 @@ export const useGame = () => {
     [dispatch]
   );
 
+  const maxBuy = useCallback(() => {
+    dispatch(maxPurchase());
+  }, [dispatch]);
+
+  const purchaseTill10Action = useCallback(
+    (resourceId: string) => {
+      dispatch(purchaseTill10(resourceId));
+    },
+    [dispatch]
+  );
+
   return {
     points,
     resources,
     purchase,
+    maxBuy,
+    purchaseTill10: purchaseTill10Action,
   };
 };

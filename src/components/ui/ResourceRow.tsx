@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from 'antd';
 import { formatNumber } from '@/utils/numberFormatter';
 
 interface ResourceRowProps {
@@ -9,6 +10,8 @@ interface ResourceRowProps {
   cost: string; // Will be formatted Big.js value
   canAfford: boolean;
   productionRatio: number; // Production ratio as percentage
+  buyMode: 'buy1' | 'till10';
+  till10Affordable: number;
   onPurchase: () => void;
 }
 
@@ -20,6 +23,8 @@ const ResourceRow: React.FC<ResourceRowProps> = ({
   cost,
   canAfford,
   productionRatio,
+  buyMode,
+  till10Affordable,
   onPurchase,
 }) => {
   return (
@@ -52,18 +57,18 @@ const ResourceRow: React.FC<ResourceRowProps> = ({
 
         {/* Column 4 & 5: Button */}
         <div className="col-span-2 relative group">
-          <button
+          <Button
             onClick={onPurchase}
             disabled={!canAfford}
-            className={`w-full h-12 px-2 py-1 rounded-lg transition-colors duration-200 font-medium flex flex-col items-center justify-center ${
-              canAfford
-                ? 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'
-                : 'bg-gray-400 text-gray-200 cursor-not-allowed'
-            }`}
+            type={canAfford ? 'primary' : 'default'}
+            size="large"
+            className="w-full h-12 flex flex-col items-center justify-center"
           >
-            <div className="text-sm">Buy 1</div>
+            <div className="text-sm">
+              {buyMode === 'buy1' ? 'Buy 1' : `Buy ${till10Affordable}`}
+            </div>
             <div className="text-xs">{cost} neurons</div>
-          </button>
+          </Button>
 
           {/* Tooltip */}
           <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
