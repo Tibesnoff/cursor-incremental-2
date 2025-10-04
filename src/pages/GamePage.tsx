@@ -83,7 +83,7 @@ const GamePage: React.FC = () => {
               resources
             );
 
-            // Calculate how many can be afforded in till 10 mode
+            // Calculate how many can be afforded based on mode
             const till10Affordable =
               buyMode === 'till10'
                 ? calculateTill10Affordable(
@@ -91,7 +91,9 @@ const GamePage: React.FC = () => {
                   resource.bought,
                   new Big(points)
                 )
-                : 1;
+                : canAfford
+                  ? 1
+                  : 0;
 
             return (
               <ResourceRow

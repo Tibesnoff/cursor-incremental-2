@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button } from 'antd';
 import { formatNumber } from '@/utils/numberFormatter';
+import PurchaseButton from './PurchaseButton';
 
 interface ResourceRowProps {
   name: string;
@@ -28,7 +28,7 @@ const ResourceRow: React.FC<ResourceRowProps> = ({
   onPurchase,
 }) => {
   return (
-    <div className="w-full max-w-6xl mx-auto px-8 py-4 bg-white rounded-lg shadow-md border border-gray-200">
+    <div className="w-full max-w-6xl mx-auto px-8 py-2 bg-white rounded-lg shadow-md border border-gray-200">
       <div className="grid grid-cols-5 gap-4 items-center">
         {/* Column 1: Name and Multiplier */}
         <div className="col-span-1">
@@ -57,18 +57,14 @@ const ResourceRow: React.FC<ResourceRowProps> = ({
 
         {/* Column 4 & 5: Button */}
         <div className="col-span-2 relative group">
-          <Button
+          <PurchaseButton
             onClick={onPurchase}
             disabled={!canAfford}
-            type={canAfford ? 'primary' : 'default'}
-            size="large"
-            className="w-full h-12 flex flex-col items-center justify-center"
-          >
-            <div className="text-sm">
-              {buyMode === 'buy1' ? 'Buy 1' : `Buy ${till10Affordable}`}
-            </div>
-            <div className="text-xs">{cost} neurons</div>
-          </Button>
+            buyMode={buyMode}
+            currentBought={bought}
+            affordableAmount={till10Affordable}
+            cost={cost}
+          />
 
           {/* Tooltip */}
           <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
