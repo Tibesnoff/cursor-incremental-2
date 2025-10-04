@@ -12,8 +12,9 @@ class TickService {
 
     this.store = store;
     this.intervalId = window.setInterval(() => {
-      // Tick logic will be handled elsewhere
-      console.log('Tick!');
+      if (this.store) {
+        this.store.dispatch({ type: 'game/tick' });
+      }
     }, 10); // 10ms = 100 FPS for incremental game
   }
 

@@ -1,5 +1,9 @@
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { setPlaying, addNeuron } from '@/store/slices/gameSlice';
+import {
+  setPlaying,
+  addNeuron,
+  purchaseResource,
+} from '@/store/slices/gameSlice';
 import { useCallback } from 'react';
 
 export const useGame = () => {
@@ -16,11 +20,19 @@ export const useGame = () => {
     dispatch(addNeuron());
   }, [dispatch]);
 
+  const purchase = useCallback(
+    (resourceId: string) => {
+      dispatch(purchaseResource(resourceId));
+    },
+    [dispatch]
+  );
+
   return {
     points,
     isPlaying,
     resources,
     toggleGame,
     addOneNeuron,
+    purchase,
   };
 };
