@@ -87,10 +87,10 @@ const GamePage: React.FC = () => {
             const till10Affordable =
               buyMode === 'till10'
                 ? calculateTill10Affordable(
-                    resource.id,
-                    resource.bought,
-                    new Big(points)
-                  )
+                  resource.id,
+                  resource.bought,
+                  new Big(points)
+                )
                 : 1;
 
             return (
