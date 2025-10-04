@@ -8,6 +8,7 @@ interface ResourceRowProps {
   multiplier: number;
   cost: string; // Will be formatted Big.js value
   canAfford: boolean;
+  productionRatio: number; // Production ratio as percentage
   onPurchase: () => void;
 }
 
@@ -18,6 +19,7 @@ const ResourceRow: React.FC<ResourceRowProps> = ({
   multiplier,
   cost,
   canAfford,
+  productionRatio,
   onPurchase,
 }) => {
   return (
@@ -37,6 +39,11 @@ const ResourceRow: React.FC<ResourceRowProps> = ({
         <div className="col-span-1">
           <span className="text-xl font-semibold text-gray-600">
             {formatNumber(owned)}
+            {productionRatio > 0 && (
+              <span className="text-sm text-green-600 ml-2">
+                ({productionRatio.toFixed(2)}%/s)
+              </span>
+            )}
           </span>
         </div>
 
@@ -48,11 +55,10 @@ const ResourceRow: React.FC<ResourceRowProps> = ({
           <button
             onClick={onPurchase}
             disabled={!canAfford}
-            className={`w-full h-12 px-2 py-1 rounded-lg transition-colors duration-200 font-medium flex flex-col items-center justify-center ${
-              canAfford
+            className={`w-full h-12 px-2 py-1 rounded-lg transition-colors duration-200 font-medium flex flex-col items-center justify-center ${canAfford
                 ? 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'
                 : 'bg-gray-400 text-gray-200 cursor-not-allowed'
-            }`}
+              }`}
           >
             <div className="text-sm">Buy 1</div>
             <div className="text-xs">{cost} neurons</div>

@@ -5,6 +5,7 @@ import { formatCost, formatWithPrecision } from '@/utils/numberFormatter';
 import { calculateCost } from '@/utils/costCalculator';
 import { getAllResourceConfigs } from '@/utils/configLoader';
 import { calculateMultiplier } from '@/utils/multiplierCalculator';
+import { calculateProductionRatio } from '@/utils/productionRatioCalculator';
 import Big from 'big.js';
 
 const GamePage: React.FC = () => {
@@ -41,6 +42,10 @@ const GamePage: React.FC = () => {
 
                         const multiplier = calculateMultiplier(resource.bought);
                         const canAfford = new Big(points).gte(currentCost);
+                        const productionRatio = calculateProductionRatio(
+                            resource.id,
+                            resources
+                        );
 
                         return (
                             <ResourceRow
@@ -51,6 +56,7 @@ const GamePage: React.FC = () => {
                                 multiplier={multiplier}
                                 cost={formatCost(currentCost)}
                                 canAfford={canAfford}
+                                productionRatio={productionRatio}
                                 onPurchase={() => handlePurchase(resource.id)}
                             />
                         );
