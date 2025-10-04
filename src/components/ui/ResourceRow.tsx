@@ -55,10 +55,11 @@ const ResourceRow: React.FC<ResourceRowProps> = ({
           <button
             onClick={onPurchase}
             disabled={!canAfford}
-            className={`w-full h-12 px-2 py-1 rounded-lg transition-colors duration-200 font-medium flex flex-col items-center justify-center ${canAfford
+            className={`w-full h-12 px-2 py-1 rounded-lg transition-colors duration-200 font-medium flex flex-col items-center justify-center ${
+              canAfford
                 ? 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer'
                 : 'bg-gray-400 text-gray-200 cursor-not-allowed'
-              }`}
+            }`}
           >
             <div className="text-sm">Buy 1</div>
             <div className="text-xs">{cost} neurons</div>

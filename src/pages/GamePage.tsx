@@ -6,6 +6,7 @@ import { calculateCost } from '@/utils/costCalculator';
 import { getAllResourceConfigs } from '@/utils/configLoader';
 import { calculateMultiplier } from '@/utils/multiplierCalculator';
 import { calculateProductionRatio } from '@/utils/productionRatioCalculator';
+import { calculateNeuronsPerSecond } from '@/utils/neuronsPerSecondCalculator';
 import Big from 'big.js';
 
 const GamePage: React.FC = () => {
@@ -15,12 +16,17 @@ const GamePage: React.FC = () => {
         purchase(resourceId);
     };
 
+    const neuronsPerSecond = calculateNeuronsPerSecond(resources);
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-100 py-8">
             <div className="container mx-auto px-4">
                 <div className="mb-8 text-center">
                     <p className="text-xl text-gray-600">
                         Charles has {formatWithPrecision(new Big(points), 1)} neurons
+                    </p>
+                    <p className="text-lg text-green-600">
+                        Your research is producing {formatWithPrecision(neuronsPerSecond, 2)} neurons per second
                     </p>
                 </div>
 
