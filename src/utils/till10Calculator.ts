@@ -1,4 +1,4 @@
-import Big from 'big.js';
+import { Decimal, createDecimal } from './bigNumber';
 import { calculateCost } from '@/utils/costCalculator';
 import { getAllResourceConfigs } from '@/utils/configLoader';
 
@@ -31,7 +31,7 @@ export const calculateTill10Needed = (currentBought: number): number => {
 export const calculateTill10Affordable = (
   resourceId: string,
   currentBought: number,
-  availablePoints: Big
+  availablePoints: Decimal
 ): number => {
   const config = getAllResourceConfigs().find((c) => c.id === resourceId);
   if (!config) return 0;
@@ -40,7 +40,10 @@ export const calculateTill10Affordable = (
   if (needed <= 0) return 0;
 
   // If we can't afford even 1, return 0
-  const firstCost = calculateCost(new Big(config.baseCost), currentBought);
+  const firstCost = calculateCost(
+    createDecimal(config.baseCost),
+    currentBought
+  );
   if (availablePoints.lt(firstCost)) return 0;
 
   let canAfford = 0;
@@ -49,7 +52,10 @@ export const calculateTill10Affordable = (
 
   // Calculate how many we can actually afford
   for (let i = 0; i < needed; i++) {
-    const cost = calculateCost(new Big(config.baseCost), currentBoughtCount);
+    const cost = calculateCost(
+      createDecimal(config.baseCost),
+      currentBoughtCount
+    );
     if (currentPoints.gte(cost)) {
       currentPoints = currentPoints.sub(cost);
       currentBoughtCount++;

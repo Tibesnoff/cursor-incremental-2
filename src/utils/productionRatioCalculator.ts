@@ -1,4 +1,4 @@
-import Big from 'big.js';
+import { Decimal, createDecimal } from './bigNumber';
 import { getAllResourceConfigs } from '@/utils/configLoader';
 import { calculateMultiplier } from '@/utils/multiplierCalculator';
 
@@ -37,14 +37,16 @@ export const calculateProductionRatio = (
   // Calculate how much the next resource produces of the current resource per second
   const nextResourceConfig = configs[resourceIndex + 1];
   const nextResourceMultiplier = calculateMultiplier(nextResource.bought);
-  const nextResourceProduction = new Big(nextResourceConfig.baseOutput)
+  const nextResourceProduction = createDecimal(nextResourceConfig.baseOutput)
     .mul(nextResource.owned)
     .mul(nextResourceMultiplier);
 
   // Calculate current resource's production per second
   const currentResourceConfig = configs[resourceIndex];
   const currentResourceMultiplier = calculateMultiplier(currentResource.bought);
-  const currentResourceProduction = new Big(currentResourceConfig.baseOutput)
+  const currentResourceProduction = createDecimal(
+    currentResourceConfig.baseOutput
+  )
     .mul(currentResource.owned)
     .mul(currentResourceMultiplier);
 

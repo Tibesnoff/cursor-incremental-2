@@ -1,9 +1,7 @@
-import { ErrorBoundary } from '@/components/ErrorBoundary';
-import Navigation from '@/components/Navigation';
-import GamePage from '@/pages/GamePage';
-import SettingsPage from '@/pages/SettingsPage';
-import { useAppDispatch } from '@/store/hooks';
-import { setPlaying } from '@/store/slices/gameSlice';
+import { ErrorBoundary } from '@/components/layout';
+import { Navigation } from '@/components/navigation';
+import { GamePage, SettingsPage } from '@/pages';
+import { useAppDispatch, setPlaying } from '@/store';
 import { useEffect, useState } from 'react';
 
 function App() {

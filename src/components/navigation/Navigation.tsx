@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import NavButton from './NavButton';
 import Submenu from './Submenu';
-import { submenuConfig } from '@/config/submenuConfig';
+import { submenuConfig } from '@/config';
 
 interface NavigationProps {
   currentPage: 'game' | 'settings';

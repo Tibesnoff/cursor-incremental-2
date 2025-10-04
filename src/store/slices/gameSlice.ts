@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import Big from 'big.js';
+import { Decimal, createDecimal } from '@/utils/bigNumber';
 import { calculateCost } from '@/utils/costCalculator';
 import { getAllResourceConfigs, getBaseNeurons } from '@/utils/configLoader';
 import { calculateMultiplier } from '@/utils/multiplierCalculator';
@@ -11,7 +11,7 @@ interface Resource {
 }
 
 interface GameState {
-  points: string; // Store as string to avoid non-serializable Big.js objects
+  points: string; // Store as string to avoid non-serializable Decimal objects
   isPlaying: boolean;
   resources: Resource[];
   buyMode: 'buy1' | 'till10';
@@ -42,7 +42,7 @@ const gameSlice = createSlice({
       state.buyMode = action.payload;
     },
     addNeuron: (state) => {
-      const currentPoints = new Big(state.points);
+      const currentPoints = createDecimal(state.points);
       state.points = currentPoints.add(1).toString();
     },
     purchaseResource: (state, action: PayloadAction<string>) => {
@@ -55,11 +55,11 @@ const gameSlice = createSlice({
         if (config) {
           // Calculate current cost based on bought count
           const currentCost = calculateCost(
-            new Big(config.baseCost),
+            createDecimal(config.baseCost),
             resource.bought
           );
 
-          const currentPoints = new Big(state.points);
+          const currentPoints = createDecimal(state.points);
           if (currentPoints.gte(currentCost)) {
             // Deduct cost
             state.points = currentPoints.sub(currentCost).toString();
@@ -72,7 +72,7 @@ const gameSlice = createSlice({
     },
     maxPurchase: (state) => {
       const configs = getAllResourceConfigs();
-      let currentPoints = new Big(state.points);
+      let currentPoints = createDecimal(state.points);
       let purchased = true;
 
       // Keep purchasing until we can't afford anything
@@ -86,7 +86,7 @@ const gameSlice = createSlice({
 
           // Calculate current cost for this resource
           const currentCost = calculateCost(
-            new Big(config.baseCost),
+            createDecimal(config.baseCost),
             resource.bought
           );
 
@@ -110,7 +110,7 @@ const gameSlice = createSlice({
       if (resource) {
         const config = getAllResourceConfigs().find((c) => c.id === resourceId);
         if (config) {
-          let currentPoints = new Big(state.points);
+          let currentPoints = createDecimal(state.points);
 
           // Calculate how many we need to buy
           let needed = 0;
@@ -126,7 +126,7 @@ const gameSlice = createSlice({
           // Buy as many as we can afford
           for (let i = 0; i < needed; i++) {
             const currentCost = calculateCost(
-              new Big(config.baseCost),
+              createDecimal(config.baseCost),
               resource.bought
             );
 
@@ -153,10 +153,10 @@ const gameSlice = createSlice({
         const rawDataConfig = configs.find((c) => c.id === 'raw-data');
         if (rawDataConfig) {
           const multiplier = calculateMultiplier(rawData.bought);
-          const production = new Big(rawDataConfig.baseOutput)
+          const production = createDecimal(rawDataConfig.baseOutput)
             .mul(rawData.owned)
             .mul(multiplier);
-          state.points = new Big(state.points).add(production).toString();
+          state.points = createDecimal(state.points).add(production).toString();
         }
       }
 
@@ -169,7 +169,7 @@ const gameSlice = createSlice({
         );
         if (processorsConfig && rawDataResource) {
           const multiplier = calculateMultiplier(processors.bought);
-          const production = new Big(processorsConfig.baseOutput)
+          const production = createDecimal(processorsConfig.baseOutput)
             .mul(processors.owned)
             .mul(multiplier);
           rawDataResource.owned += production.toNumber();
@@ -185,7 +185,7 @@ const gameSlice = createSlice({
         );
         if (modelsConfig && processorsResource) {
           const multiplier = calculateMultiplier(models.bought);
-          const production = new Big(modelsConfig.baseOutput)
+          const production = createDecimal(modelsConfig.baseOutput)
             .mul(models.owned)
             .mul(multiplier);
           processorsResource.owned += production.toNumber();
@@ -199,7 +199,7 @@ const gameSlice = createSlice({
         const modelsResource = state.resources.find((r) => r.id === 'models');
         if (algorithmsConfig && modelsResource) {
           const multiplier = calculateMultiplier(algorithms.bought);
-          const production = new Big(algorithmsConfig.baseOutput)
+          const production = createDecimal(algorithmsConfig.baseOutput)
             .mul(algorithms.owned)
             .mul(multiplier);
           modelsResource.owned += production.toNumber();
@@ -215,7 +215,7 @@ const gameSlice = createSlice({
         );
         if (neuralNetsConfig && algorithmsResource) {
           const multiplier = calculateMultiplier(neuralNets.bought);
-          const production = new Big(neuralNetsConfig.baseOutput)
+          const production = createDecimal(neuralNetsConfig.baseOutput)
             .mul(neuralNets.owned)
             .mul(multiplier);
           algorithmsResource.owned += production.toNumber();
@@ -231,7 +231,7 @@ const gameSlice = createSlice({
         );
         if (frameworksConfig && neuralNetsResource) {
           const multiplier = calculateMultiplier(frameworks.bought);
-          const production = new Big(frameworksConfig.baseOutput)
+          const production = createDecimal(frameworksConfig.baseOutput)
             .mul(frameworks.owned)
             .mul(multiplier);
           neuralNetsResource.owned += production.toNumber();
@@ -247,7 +247,7 @@ const gameSlice = createSlice({
         );
         if (dataCentersConfig && frameworksResource) {
           const multiplier = calculateMultiplier(dataCenters.bought);
-          const production = new Big(dataCentersConfig.baseOutput)
+          const production = createDecimal(dataCentersConfig.baseOutput)
             .mul(dataCenters.owned)
             .mul(multiplier);
           frameworksResource.owned += production.toNumber();
@@ -267,7 +267,7 @@ const gameSlice = createSlice({
         );
         if (researchLabsConfig && dataCentersResource) {
           const multiplier = calculateMultiplier(researchLabs.bought);
-          const production = new Big(researchLabsConfig.baseOutput)
+          const production = createDecimal(researchLabsConfig.baseOutput)
             .mul(researchLabs.owned)
             .mul(multiplier);
           dataCentersResource.owned += production.toNumber();

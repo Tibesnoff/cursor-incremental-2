@@ -1,4 +1,4 @@
-import Big from 'big.js';
+import { Decimal, createDecimal } from './bigNumber';
 import { getAllResourceConfigs } from '@/utils/configLoader';
 import { calculateMultiplier } from '@/utils/multiplierCalculator';
 
@@ -13,23 +13,23 @@ export interface Resource {
  * @param resources - Array of all resources
  * @returns The total neurons per second production
  */
-export const calculateNeuronsPerSecond = (resources: Resource[]): Big => {
+export const calculateNeuronsPerSecond = (resources: Resource[]): Decimal => {
   const configs = getAllResourceConfigs();
 
   // Find Raw Data resource (which produces neurons)
   const rawData = resources.find((r) => r.id === 'raw-data');
 
   if (!rawData || rawData.owned === 0) {
-    return new Big(0);
+    return createDecimal(0);
   }
 
   const rawDataConfig = configs.find((c) => c.id === 'raw-data');
   if (!rawDataConfig) {
-    return new Big(0);
+    return createDecimal(0);
   }
 
   const multiplier = calculateMultiplier(rawData.bought);
-  const production = new Big(rawDataConfig.baseOutput)
+  const production = createDecimal(rawDataConfig.baseOutput)
     .mul(rawData.owned)
     .mul(multiplier);
 

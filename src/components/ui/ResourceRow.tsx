@@ -1,15 +1,21 @@
 import React from 'react';
-import { formatNumber } from '@/utils/numberFormatter';
-import PurchaseButton from './PurchaseButton';
-import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { formatCost } from '@/utils/numberFormatter';
-import { calculateCost } from '@/utils/costCalculator';
-import { getAllResourceConfigs } from '@/utils/configLoader';
-import { calculateMultiplier } from '@/utils/multiplierCalculator';
-import { calculateProductionRatio } from '@/utils/productionRatioCalculator';
-import { calculateTill10Affordable } from '@/utils/till10Calculator';
-import { purchaseResource, purchaseTill10 } from '@/store/slices/gameSlice';
-import Big from 'big.js';
+import { PurchaseButton } from '@/components/ui';
+import {
+  useAppSelector,
+  useAppDispatch,
+  purchaseResource,
+  purchaseTill10,
+} from '@/store';
+import {
+  formatNumber,
+  formatCost,
+  calculateCost,
+  getAllResourceConfigs,
+  calculateMultiplier,
+  calculateProductionRatio,
+  calculateTill10Affordable,
+  createDecimal,
+} from '@/utils';
 
 interface ResourceRowProps {
   resourceId: string;
@@ -27,15 +33,22 @@ const ResourceRow: React.FC<ResourceRowProps> = ({ resourceId }) => {
   if (!resource || !config) return null;
 
   // Calculate all the values we need
-  const currentCost = calculateCost(new Big(config.baseCost), resource.bought);
+  const currentCost = calculateCost(
+    createDecimal(config.baseCost),
+    resource.bought
+  );
   const multiplier = calculateMultiplier(resource.bought);
-  const canAfford = new Big(points).gte(currentCost);
+  const canAfford = createDecimal(points).gte(currentCost);
   const productionRatio = calculateProductionRatio(resourceId, resources);
 
   // Calculate affordable amount based on mode
   const till10Affordable =
     buyMode === 'till10'
-      ? calculateTill10Affordable(resourceId, resource.bought, new Big(points))
+      ? calculateTill10Affordable(
+          resourceId,
+          resource.bought,
+          createDecimal(points)
+        )
       : canAfford
         ? 1
         : 0;

@@ -1,10 +1,11 @@
-import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import {
+  useAppSelector,
+  useAppDispatch,
   purchaseResource,
   maxPurchase,
   purchaseTill10,
   setBuyMode,
-} from '@/store/slices/gameSlice';
+} from '@/store';
 import { useCallback } from 'react';
 
 export const useGame = () => {

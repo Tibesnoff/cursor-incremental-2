@@ -1,4 +1,4 @@
-import Big from 'big.js';
+import { Decimal, createDecimal } from './bigNumber';
 
 /**
  * Calculates the cost of purchasing a resource based on tiered pricing
@@ -13,13 +13,10 @@ import Big from 'big.js';
  * @returns The cost to purchase the next resource
  */
 export const calculateCost = (
-  baseCost: Big | number | string,
+  baseCost: Decimal | number | string,
   bought: number
-): Big => {
-  const base =
-    typeof baseCost === 'string' || typeof baseCost === 'number'
-      ? new Big(baseCost)
-      : baseCost;
+): Decimal => {
+  const base = createDecimal(baseCost);
 
   // First 10 purchases: same cost
   if (bought < 10) {
@@ -35,6 +32,6 @@ export const calculateCost = (
   }
 
   // Subsequent tiers: 10^(tier-1) * 1000x increase
-  const tierMultiplier = new Big(10).pow(tier - 1).mul(1000);
+  const tierMultiplier = new Decimal(10).pow(tier - 1).mul(1000);
   return base.mul(tierMultiplier);
 };
