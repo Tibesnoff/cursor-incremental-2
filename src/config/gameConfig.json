@@ -10,7 +10,7 @@
     },
     {
       "id": "processors",
-      "name": "Processors", 
+      "name": "Processors",
       "baseOutput": 0.01,
       "baseCost": 100,
       "costMultiplier": 1.15

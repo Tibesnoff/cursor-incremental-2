@@ -5,18 +5,18 @@ import { setPlaying } from '@/store/slices/gameSlice';
 import { useEffect } from 'react';
 
 function App() {
-    const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
-    // Start the game automatically when app loads
-    useEffect(() => {
-        dispatch(setPlaying(true));
-    }, [dispatch]);
+  // Start the game automatically when app loads
+  useEffect(() => {
+    dispatch(setPlaying(true));
+  }, [dispatch]);
 
-    return (
-        <ErrorBoundary>
-            <GamePage />
-        </ErrorBoundary>
-    );
+  return (
+    <ErrorBoundary>
+      <GamePage />
+    </ErrorBoundary>
+  );
 }
 
 export default App;

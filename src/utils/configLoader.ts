@@ -13,8 +13,14 @@ export interface GameConfig {
   resources: ResourceConfig[];
 }
 
+// Cache the loaded config to avoid repeated JSON parsing
+let cachedConfig: GameConfig | null = null;
+
 export const loadGameConfig = (): GameConfig => {
-  return gameConfig as GameConfig;
+  if (!cachedConfig) {
+    cachedConfig = gameConfig as GameConfig;
+  }
+  return cachedConfig;
 };
 
 export const getResourceConfig = (id: string): ResourceConfig | undefined => {

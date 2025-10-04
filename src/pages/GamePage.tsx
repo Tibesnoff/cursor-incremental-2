@@ -1,7 +1,7 @@
 import React from 'react';
 import ResourceRow from '@/components/ui/ResourceRow';
 import { useGame } from '@/hooks/useGame';
-import { formatNumber, formatCost, formatWithPrecision } from '@/utils/numberFormatter';
+import { formatCost, formatWithPrecision } from '@/utils/numberFormatter';
 import { calculateCost } from '@/utils/costCalculator';
 import { getAllResourceConfigs } from '@/utils/configLoader';
 import { calculateMultiplier } from '@/utils/multiplierCalculator';
@@ -25,7 +25,9 @@ const GamePage: React.FC = () => {
 
                 <div className="space-y-4">
                     {resources.map((resource, index) => {
-                        const config = getAllResourceConfigs().find(c => c.id === resource.id);
+                        const config = getAllResourceConfigs().find(
+                            (c) => c.id === resource.id
+                        );
                         if (!config) return null;
 
                         // Check if resource is locked (previous resource not bought)
@@ -34,8 +36,7 @@ const GamePage: React.FC = () => {
 
                         const currentCost = calculateCost(
                             new Big(config.baseCost),
-                            resource.bought,
-                            new Big(config.costMultiplier)
+                            resource.bought
                         );
 
                         const multiplier = calculateMultiplier(resource.bought);

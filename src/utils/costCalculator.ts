@@ -10,13 +10,11 @@ import Big from 'big.js';
  *
  * @param baseCost - The initial cost of the resource
  * @param bought - Number of resources already bought
- * @param multiplier - Cost multiplier (unused in new system)
  * @returns The cost to purchase the next resource
  */
 export const calculateCost = (
   baseCost: Big | number | string,
-  bought: number,
-  multiplier: Big | number | string = 1.15
+  bought: number
 ): Big => {
   const base =
     typeof baseCost === 'string' || typeof baseCost === 'number'

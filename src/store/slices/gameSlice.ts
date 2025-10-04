@@ -51,8 +51,7 @@ const gameSlice = createSlice({
           // Calculate current cost based on bought count
           const currentCost = calculateCost(
             new Big(config.baseCost),
-            resource.bought,
-            new Big(config.costMultiplier)
+            resource.bought
           );
 
           const currentPoints = new Big(state.points);
@@ -67,8 +66,6 @@ const gameSlice = createSlice({
       }
     },
     tick: (state) => {
-      // Production chain: Raw Data -> Processors -> Models -> etc.
-      // Each resource produces the next one in the chain
       const configs = getAllResourceConfigs();
 
       // Raw Data produces neurons
@@ -77,14 +74,10 @@ const gameSlice = createSlice({
         const rawDataConfig = configs.find((c) => c.id === 'raw-data');
         if (rawDataConfig) {
           const multiplier = calculateMultiplier(rawData.bought);
-          const currentPoints = new Big(state.points);
-          state.points = currentPoints
-            .add(
-              new Big(rawDataConfig.baseOutput)
-                .mul(rawData.owned)
-                .mul(multiplier)
-            )
-            .toString();
+          const production = new Big(rawDataConfig.baseOutput)
+            .mul(rawData.owned)
+            .mul(multiplier);
+          state.points = new Big(state.points).add(production).toString();
         }
       }
 
@@ -97,10 +90,10 @@ const gameSlice = createSlice({
         );
         if (processorsConfig && rawDataResource) {
           const multiplier = calculateMultiplier(processors.bought);
-          rawDataResource.owned += new Big(processorsConfig.baseOutput)
+          const production = new Big(processorsConfig.baseOutput)
             .mul(processors.owned)
-            .mul(multiplier)
-            .toNumber();
+            .mul(multiplier);
+          rawDataResource.owned += production.toNumber();
         }
       }
 
@@ -113,10 +106,10 @@ const gameSlice = createSlice({
         );
         if (modelsConfig && processorsResource) {
           const multiplier = calculateMultiplier(models.bought);
-          processorsResource.owned += new Big(modelsConfig.baseOutput)
+          const production = new Big(modelsConfig.baseOutput)
             .mul(models.owned)
-            .mul(multiplier)
-            .toNumber();
+            .mul(multiplier);
+          processorsResource.owned += production.toNumber();
         }
       }
 
@@ -127,10 +120,10 @@ const gameSlice = createSlice({
         const modelsResource = state.resources.find((r) => r.id === 'models');
         if (algorithmsConfig && modelsResource) {
           const multiplier = calculateMultiplier(algorithms.bought);
-          modelsResource.owned += new Big(algorithmsConfig.baseOutput)
+          const production = new Big(algorithmsConfig.baseOutput)
             .mul(algorithms.owned)
-            .mul(multiplier)
-            .toNumber();
+            .mul(multiplier);
+          modelsResource.owned += production.toNumber();
         }
       }
 
@@ -143,10 +136,10 @@ const gameSlice = createSlice({
         );
         if (neuralNetsConfig && algorithmsResource) {
           const multiplier = calculateMultiplier(neuralNets.bought);
-          algorithmsResource.owned += new Big(neuralNetsConfig.baseOutput)
+          const production = new Big(neuralNetsConfig.baseOutput)
             .mul(neuralNets.owned)
-            .mul(multiplier)
-            .toNumber();
+            .mul(multiplier);
+          algorithmsResource.owned += production.toNumber();
         }
       }
 
@@ -159,10 +152,10 @@ const gameSlice = createSlice({
         );
         if (frameworksConfig && neuralNetsResource) {
           const multiplier = calculateMultiplier(frameworks.bought);
-          neuralNetsResource.owned += new Big(frameworksConfig.baseOutput)
+          const production = new Big(frameworksConfig.baseOutput)
             .mul(frameworks.owned)
-            .mul(multiplier)
-            .toNumber();
+            .mul(multiplier);
+          neuralNetsResource.owned += production.toNumber();
         }
       }
 
@@ -175,10 +168,10 @@ const gameSlice = createSlice({
         );
         if (dataCentersConfig && frameworksResource) {
           const multiplier = calculateMultiplier(dataCenters.bought);
-          frameworksResource.owned += new Big(dataCentersConfig.baseOutput)
+          const production = new Big(dataCentersConfig.baseOutput)
             .mul(dataCenters.owned)
-            .mul(multiplier)
-            .toNumber();
+            .mul(multiplier);
+          frameworksResource.owned += production.toNumber();
         }
       }
 
@@ -195,10 +188,10 @@ const gameSlice = createSlice({
         );
         if (researchLabsConfig && dataCentersResource) {
           const multiplier = calculateMultiplier(researchLabs.bought);
-          dataCentersResource.owned += new Big(researchLabsConfig.baseOutput)
+          const production = new Big(researchLabsConfig.baseOutput)
             .mul(researchLabs.owned)
-            .mul(multiplier)
-            .toNumber();
+            .mul(multiplier);
+          dataCentersResource.owned += production.toNumber();
         }
       }
     },
