@@ -1,13 +1,21 @@
 import { ErrorBoundary } from '@/components/ErrorBoundary';
-import HomePage from '@/pages/HomePage';
 import GamePage from '@/pages/GamePage';
-import { useGame } from '@/hooks/useGame';
+import { useAppDispatch } from '@/store/hooks';
+import { setPlaying } from '@/store/slices/gameSlice';
+import { useEffect } from 'react';
 
 function App() {
-    const { isPlaying } = useGame();
+    const dispatch = useAppDispatch();
+
+    // Start the game automatically when app loads
+    useEffect(() => {
+        dispatch(setPlaying(true));
+    }, [dispatch]);
 
     return (
-        <ErrorBoundary>{isPlaying ? <GamePage /> : <HomePage />}</ErrorBoundary>
+        <ErrorBoundary>
+            <GamePage />
+        </ErrorBoundary>
     );
 }
 
